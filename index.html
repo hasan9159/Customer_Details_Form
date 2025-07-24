@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />  
+  <title>Customer Details Form</title> 
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    form {
+      background-color: #ebeb9b;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 700px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    h2 {
+      grid-column: 1 / -1;
+      text-align: center;
+    }
+    .section-heading {
+      grid-column: 1 / -1;
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 10px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid #444;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    .btn-group {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+    }
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #submitBtn { background-color: #4CAF50; }
+    #clearBtn { background-color: #18721b; }
+    #submitBtn:hover { background-color: #8af20c; }
+    #clearBtn:hover { background-color: #79b035; }
+    #photoPreview {
+      width: 150px;
+      height: 150px;
+      border-radius: 100px;
+      border: 2px solid #444;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 10px auto;
+    }
+    .error-message {
+      color: #d93025;
+      font-size: 0.9em;
+      margin-top: 3px;
+      display: none;
+    }
+    input.invalid, select.invalid, textarea.invalid {
+      border-color: #d93025;
+      background-color: #ffe6e6;
+    }
+    .current-address-group {
+      grid-column: 1 / -1;
+      transition: max-height 0.5s ease, opacity 0.3s ease;
+      max-height: 1000px; /* large enough */
+      opacity: 1;
+      overflow: hidden;
+    }
+    .current-address-group.hidden {
+      max-height: 0;
+      opacity: 0;
+      padding: 0;
+      margin: 0;
+      pointer-events: none;
+    }
+    #sameAddress {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    /* Notification Bar */
+    #notification-bar {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4caf50;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+    #notification-bar.error {
+      background-color: #d93025;
+    }
+    #notification-bar.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .Check-Aline {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+}
+.Check-Aline .full-width {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  margin: 0;
+}
+
+  </style>
+</head>
+<body>
+  <form id="customerForm" novalidate>
+    <h2>Customer Details</h2>
+
+    <div class="full-width" style="text-align: center;">
+      <label for="photo">Upload Your Photo:</label><br>
+      <img id="photoPreview" src="https://placehold.co/150x150/E0E0E0/333?text=Photo" alt="Profile Preview" />
+      <input type="file" id="photo" name="photo" accept="image/*" required>
+      <div class="error-message" id="photo-error">Please upload a photo.</div>
+    </div>
+
+    <div class="section-heading">Personal Details</div>
+
+    <div>
+      <label for="Fname">First Name:</label>
+      <input type="text" id="Fname" name="Fname" required>
+      <div class="error-message">First name is required.</div>
+    </div>
+
+    <div>
+      <label for="Lname">Last Name:</label>
+      <input type="text" id="Lname" name="Lname" required>
+      <div class="error-message">Last name is required.</div>
+    </div>
+
+    <div>
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender" required>
+        <option value="">--Select--</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+      <div class="error-message">Please select a gender.</div>
+    </div>
+
+    <div>
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob" required>
+      <div class="error-message">Please enter your date of birth.</div>
+    </div>
+
+    <div>
+      <label for="age">Age:</label>
+      <input type="number" id="age" name="age" required>
+      <div class="error-message">Age is required.</div>
+    </div>
+
+    <div class="section-heading">Contact Details</div>
+
+    <div>
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required>
+      <div class="error-message">Enter a valid 10-digit phone number.</div>
+    </div>
+
+    <div class="full-width">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      <div class="error-message">Enter a valid email address.</div>
+    </div>
+
+    <div class="section-heading">Permanent Address</div>
+
+    <div class="full-width">
+      <label for="perm-address">Street Address:</label>
+      <input type="text" id="perm-address" name="perm-address" required>
+      <div class="error-message">Street address is required.</div>
+    </div>
+
+    <div>
+      <label for="perm-city">City:</label>
+      <select id="perm-city" name="perm-city" required>
+        <option value="">--Select City--</option>
+        <option>Chennai</option>
+        <option>Coimbatore</option>
+        <option>Madurai</option>
+      </select>
+      <div class="error-message">Select a city.</div>
+    </div>
+
+    <div>
+      <label for="perm-state">State:</label>
+      <select id="perm-state" name="perm-state" required>
+        <option value="">--Select State--</option>
+        <option>Tamil Nadu</option>
+        <option>Maharashtra</option>
+        <option>Karnataka</option>
+        <option>Kerala</option>
+        <option>Delhi</option>
+        <option>West Bengal</option>
+      </select>
+      <div class="error-message">Select a state.</div>
+    </div>
+
+    <div>
+      <label for="perm-pincode">Pincode:</label>
+      <input type="text" id="perm-pincode" name="perm-pincode" required pattern="\d{6}" title="Enter 6-digit pincode">
+      <div class="error-message">Enter a valid 6-digit pincode.</div>
+    </div>
+
+    <div>
+      <label for="perm-country">Country:</label>
+      <select id="perm-country" name="perm-country" required>
+        <option value="">--Select Country--</option>
+        <option>India</option>
+        <option>China</option>
+        <option>Japan</option>
+        <option>Indonesia</option>
+        <option>Singapore</option>
+      </select>
+      <div class="error-message">Select a country.</div>
+    </div>
+<div class="Check-Aline">
+    <div class="full-width" style="display:flex; align-items:center;">
+      <input type="checkbox" id="sameAddress" name="sameAddress" />
+      <label for="sameAddress" style="margin-left: 10px;">Current address same as permanent address</label>
+    </div>
+</div>
+    <div class="current-address-group">
+      <div class="section-heading">Current Address</div>
+
+      <div class="full-width">
+        <label for="curr-address">Street Address:</label>
+        <input type="text" id="curr-address" name="curr-address" required>
+        <div class="error-message">Street address is required.</div>
+      </div>
+
+      <div>
+        <label for="curr-city">City:</label>
+        <select id="curr-city" name="curr-city" required>
+          <option value="">--Select City--</option>
+          <option>Chennai</option>
+          <option>Coimbatore</option>
+          <option>Madurai</option>
+        </select>
+        <div class="error-message">Select a city.</div>
+      </div>
+
+      <div>
+        <label for="curr-state">State:</label>
+        <select id="curr-state" name="curr-state" required>
+          <option value="">--Select State--</option>
+          <option>Tamil Nadu</option>
+          <option>Maharashtra</option>
+          <option>Karnataka</option>
+          <option>Kerala</option>
+          <option>Delhi</option>
+          <option>West Bengal</option>
+        </select>
+        <div class="error-message">Select a state.</div>
+      </div>
+
+      <div>
+        <label for="curr-pincode">Pincode:</label>
+        <input type="text" id="curr-pincode" name="curr-pincode" required pattern="\d{6}" title="Enter 6-digit pincode">
+        <div class="error-message">Enter a valid 6-digit pincode.</div>
+      </div>
+
+      <div>
+        <label for="curr-country">Country:</label>
+        <select id="curr-country" name="curr-country" required>
+          <option value="">--Select Country--</option>
+          <option>India</option>
+          <option>China</option>
+          <option>Japan</option>
+          <option>Indonesia</option>
+          <option>Singapore</option>
+        </select>
+        <div class="error-message">Select a country.</div>
+      </div>
+    </div>
+
+    <div class="section-heading">Feedback</div>
+
+    <div class="full-width">
+      <label for="feedback">Feedback:</label>
+      <textarea id="feedback" name="feedback" rows="4" required></textarea>
+      <div class="error-message">Please enter your feedback.</div>
+    </div>
+
+    <div class="btn-group">
+      <button type="submit" id="submitBtn">Submit</button>
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+  </form>
+
+  <div id="notification-bar"></div>
+
+<script>
+  const form = document.getElementById('customerForm');
+  const dobInput = document.getElementById('dob');
+  const ageInput = document.getElementById('age');
+  const photoInput = document.getElementById('photo');
+  const photoPreview = document.getElementById('photoPreview');
+  const sameAddressCheckbox = document.getElementById('sameAddress');
+  const currentAddressGroup = document.querySelector('.current-address-group');
+
+  
+
+  // Profile picture preview
+  photoInput.addEventListener('change', () => {
+    const file = photoInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        photoPreview.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      photoPreview.src = "https://placehold.co/150x150/E0E0E0/333?text=Photo";
+    }
+  });
+
+  // Copy address and disable current address fields if checkbox checked
+  sameAddressCheckbox.addEventListener('change', () => {
+  const checked = sameAddressCheckbox.checked;
+  const fields = ['address', 'city', 'state', 'pincode', 'country'];
+  fields.forEach(fld => {
+    const perm = document.getElementById(`perm-${fld}`);
+    const curr = document.getElementById(`curr-${fld}`);
+    if (checked) {
+      curr.value = perm.value; // Copy permanent to current
+      curr.disabled = true;
+    } else {
+      curr.disabled = false;
+      curr.value = perm.value; // Restore permanent value when unchecked
+    }
+  });
+  currentAddressGroup.classList.toggle('hidden', checked);
+});
+
+  // Validation helpers
+  const fieldsToValidate = form.querySelectorAll('input, select, textarea');
+
+  function showError(field) {
+    field.classList.add('invalid');
+    const err = field.nextElementSibling;
+    if (err && err.classList.contains('error-message')) {
+      err.style.display = 'block';
+    }
+  }
+
+  function clearError(field) {
+    field.classList.remove('invalid');
+    const err = field.nextElementSibling;
+    if (err && err.classList.contains('error-message')) {
+      err.style.display = 'none';
+    }
+  }
+
+  function validateField(field) {
+    if (field.disabled) {
+      clearError(field);
+      return true;
+    }
+
+    // Custom validation for Fname and Lname (only letters, min 2 chars)
+    if (field.id === 'Fname' || field.id === 'Lname') {
+      const nameRegex = /^[A-Za-z]{2,}$/;
+      if (!nameRegex.test(field.value.trim())) {
+        showError(field);
+        return false;
+      }
+    }
+
+    // Custom validation for phone (10 digits)
+    if (field.id === 'phone') {
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(field.value.trim())) {
+        showError(field);
+        return false;
+      }
+    }
+
+    // Custom validation for email
+    if (field.id === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(field.value.trim())) {
+        showError(field);
+        return false;
+      }
+    }
+
+    // Custom validation for pincode (perm and curr, 6 digits)
+    if (field.id === 'perm-pincode' || field.id === 'curr-pincode') {
+      const pinRegex = /^\d{6}$/;
+      if (!pinRegex.test(field.value.trim())) {
+        showError(field);
+        return false;
+      }
+    }
+
+    if (!field.checkValidity()) {
+      showError(field);
+      return false;
+    } else {
+      clearError(field);
+      return true;
+    }
+  }
+
+  fieldsToValidate.forEach(field => {
+    field.addEventListener('blur', () => validateField(field));
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    let valid = true;
+
+    // Validate all fields
+    fieldsToValidate.forEach(field => {
+      if (!validateField(field)) valid = false;
+    });
+
+    // Extra check for photo upload
+    if (!photoInput.files.length) {
+      showError(photoInput);
+      valid = false;
+    } else {
+      clearError(photoInput);
+    }
+
+    if (!valid) {
+      showNotification('Please fix errors in the form before submitting.', true);
+      return;
+    }
+
+  
+    const formData = new FormData(form);
+
+  
+    showNotification('Form submitted successfully!');
+
+   
+  });
+
+  // Clear button functionality
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    form.reset();
+    photoPreview.src = "https://placehold.co/150x150/E0E0E0/333?text=Photo";
+    ageInput.value = '';
+    currentAddressGroup.classList.remove('hidden');
+    sameAddressCheckbox.checked = false;
+    fieldsToValidate.forEach(field => clearError(field));
+    clearNotification();
+  });
+
+  // Notification bar helper
+  const notificationBar = document.getElementById('notification-bar');
+  let notificationTimeout;
+
+  function showNotification(message, isError = false) {
+    notificationBar.textContent = message;
+    notificationBar.classList.toggle('error', isError);
+    notificationBar.classList.add('show');
+    clearTimeout(notificationTimeout);
+    notificationTimeout = setTimeout(() => {
+      notificationBar.classList.remove('show');
+    }, 4000);
+  }
+
+  function clearNotification() {
+    notificationBar.classList.remove('show');
+    notificationBar.textContent = '';
+  }
+</script>
+
+</body>
+</html>
