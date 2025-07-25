@@ -191,26 +191,33 @@
       color: #fff;
     }
     .notification-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 1rem;
+      position: fixed; /* changed from absolute */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      min-width: 320px;
+      max-width: 90vw;
+      padding: 1.5rem 2.5rem;
       text-align: center;
       color: white;
       font-weight: 600;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease-in-out;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
       z-index: 1001;
+      transition: opacity 0.3s, transform 0.3s;
     }
     .notification-bar.show {
-      transform: translateY(0);
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
     }
     .notification-bar.success {
-      background-color: #2ecc71;
+      background: #27ae60; /* Green */
     }
     .notification-bar.error {
-      background-color: #e74c3c;
+      background: #e74c3c; /* Red */
     }
   </style>
 </head>
@@ -225,13 +232,12 @@
           <div class="form-group full-width profile-upload-container">
             <img id="photoPreview" src="https://placehold.co/80x80/E0E0E0/333?text=Photo" alt="Profile Preview">
             <div class="form-group">
-              <label for="photo">Profile Picture</label>
+              <label for="photo">   Profile Picture</label>
               <label class="file-upload-btn">
                 Upload Photo
-                <input type="file" id="photo" name="photo" accept="image/*" required>
+                <input type="file" id="photo" name="photo" accept="image/*" >
               </label>
-              <div class="error-message" id="photo-error">Please upload a photo.</div>
-            </div>
+               </div>
           </div>
           <div class="form-group">
             <label for="Fname">First Name *</label>
@@ -260,7 +266,7 @@
           </div>
           <div class="form-group">
             <label for="age">Age</label>
-            <input type="number" id="age" name="age" required  >
+            <input type="number" id="age" name="age" readonly>
             <div class="error-message">Age is required.</div>
           </div>
         </div>
@@ -282,6 +288,7 @@
         </div>
       </fieldset>
 
+      <!-- --- Current Address --- -->
       <fieldset>
         <legend>Current Address</legend>
         <div class="form-grid">
@@ -289,34 +296,6 @@
             <label for="curr-address">Street Address</label>
             <input type="text" id="curr-address" name="curr-address" required>
             <div class="error-message">Street address is required.</div>
-          </div>
-          <div class="form-group">
-            <label for="curr-city">City</label>
-            <select id="curr-city" name="curr-city" required>
-              <option value="">--Select City--</option>
-              <option>Chennai</option>
-              <option>Coimbatore</option>
-              <option>Madurai</option>
-            </select>
-            <div class="error-message">Select a city.</div>
-          </div>
-          <div class="form-group">
-            <label for="curr-state">State</label>
-            <select id="curr-state" name="curr-state" required>
-              <option value="">--Select State--</option>
-              <option>Tamil Nadu</option>
-              <option>Maharashtra</option>
-              <option>Karnataka</option>
-              <option>Kerala</option>
-              <option>Delhi</option>
-              <option>West Bengal</option>
-            </select>
-            <div class="error-message">Select a state.</div>
-          </div>
-          <div class="form-group">
-            <label for="curr-pincode">Pincode</label>
-            <input type="text" id="curr-pincode" name="curr-pincode" required pattern="\d{6}" title="Enter 6-digit pincode">
-            <div class="error-message">Enter a valid 6-digit pincode.</div>
           </div>
           <div class="form-group">
             <label for="curr-country">Country</label>
@@ -330,37 +309,9 @@
             </select>
             <div class="error-message">Select a country.</div>
           </div>
-        </div>
-      </fieldset>
-
-      <div class="form-group full-width">
-        <label class="checkbox-label">
-          <input type="checkbox" id="sameAddress" name="sameAddress" />
-          Permanent address is the same as current
-        </label>
-      </div>
-
-      <fieldset id="permanentAddressFieldset">
-        <legend>Permanent Address</legend>
-        <div class="form-grid">
-          <div class="form-group full-width">
-            <label for="perm-address">Street Address</label>
-            <input type="text" id="perm-address" name="perm-address" required>
-            <div class="error-message">Street address is required.</div>
-          </div>
           <div class="form-group">
-            <label for="perm-city">City</label>
-            <select id="perm-city" name="perm-city" required>
-              <option value="">--Select City--</option>
-              <option>Chennai</option>
-              <option>Coimbatore</option>
-              <option>Madurai</option>
-            </select>
-            <div class="error-message">Select a city.</div>
-          </div>
-          <div class="form-group">
-            <label for="perm-state">State</label>
-            <select id="perm-state" name="perm-state" required>
+            <label for="curr-state">State</label>
+            <select id="curr-state" name="curr-state" required disabled>
               <option value="">--Select State--</option>
               <option>Tamil Nadu</option>
               <option>Maharashtra</option>
@@ -372,9 +323,39 @@
             <div class="error-message">Select a state.</div>
           </div>
           <div class="form-group">
-            <label for="perm-pincode">Pincode</label>
-            <input type="text" id="perm-pincode" name="perm-pincode" required pattern="\d{6}" title="Enter 6-digit pincode">
+            <label for="curr-city">City</label>
+            <select id="curr-city" name="curr-city" required disabled>
+              <option value="">--Select City--</option>
+              <option>Chennai</option>
+              <option>Coimbatore</option>
+              <option>Madurai</option>
+            </select>
+            <div class="error-message">Select a city.</div>
+          </div>
+          <div class="form-group">
+            <label for="curr-pincode">Pincode</label>
+            <input type="text" id="curr-pincode" name="curr-pincode" required pattern="\d{6}" title="Enter 6-digit pincode">
             <div class="error-message">Enter a valid 6-digit pincode.</div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Place the checkbox here, between the two address sections -->
+      <div class="form-group full-width">
+        <label class="checkbox-label">
+          <input type="checkbox" id="sameAddress">
+          Permanent address is same as current address
+        </label>
+      </div>
+
+      <!-- --- Permanent Address --- -->
+      <fieldset id="permanentAddressFieldset">
+        <legend>Permanent Address</legend>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="perm-address">Street Address</label>
+            <input type="text" id="perm-address" name="perm-address" required>
+            <div class="error-message">Street address is required.</div>
           </div>
           <div class="form-group">
             <label for="perm-country">Country</label>
@@ -388,8 +369,38 @@
             </select>
             <div class="error-message">Select a country.</div>
           </div>
+          <div class="form-group">
+            <label for="perm-state">State</label>
+            <select id="perm-state" name="perm-state" required disabled>
+              <option value="">--Select State--</option>
+              <option>Tamil Nadu</option>
+              <option>Maharashtra</option>
+              <option>Karnataka</option>
+              <option>Kerala</option>
+              <option>Delhi</option>
+              <option>West Bengal</option>
+            </select>
+            <div class="error-message">Select a state.</div>
+          </div>
+          <div class="form-group">
+            <label for="perm-city">City</label>
+            <select id="perm-city" name="perm-city" required disabled>
+              <option value="">--Select City--</option>
+              <option>Chennai</option>
+              <option>Coimbatore</option>
+              <option>Madurai</option>
+            </select>
+            <div class="error-message">Select a city.</div>
+          </div>
+          <div class="form-group">
+            <label for="perm-pincode">Pincode</label>
+            <input type="text" id="perm-pincode" name="perm-pincode" required pattern="\d{6}" title="Enter 6-digit pincode">
+            <div class="error-message">Enter a valid 6-digit pincode.</div>
+          </div>
         </div>
       </fieldset>
+
+      
 
       <fieldset>
         <legend>Feedback</legend>
@@ -426,13 +437,24 @@
       }
     });
 
-  
+    const dobInput = document.getElementById('dob');
+    const ageInput = document.getElementById('age');
 
+dobInput.addEventListener('change', function() {
+  const dob = new Date(this.value);
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+    age--;
+  }
+  ageInput.value = (this.value ? (age >= 0 ? age : '') : '');
+});
     // --- Address Sync Logic ---
     const sameAddressCheckbox = document.getElementById('sameAddress');
     const permanentAddressFieldset = document.getElementById('permanentAddressFieldset');
-    const currentAddressFields = ['curr-address', 'curr-city', 'curr-state', 'curr-pincode', 'curr-country'];
-    const permanentAddressFields = ['perm-address', 'perm-city', 'perm-state', 'perm-pincode', 'perm-country'];
+    const currentAddressFields = ['curr-address', 'curr-country', 'curr-state', 'curr-city', 'curr-pincode'];
+    const permanentAddressFields = ['perm-address', 'perm-country', 'perm-state', 'perm-city', 'perm-pincode'];
 
     sameAddressCheckbox.addEventListener('change', function() {
       const isChecked = this.checked;
@@ -446,6 +468,66 @@
         } else {
           permField.disabled = false;
         }
+      }
+    });
+
+    // --- Enable/disable State and City based on Country and State selection ---
+
+    // Current Address
+    const currCountry = document.getElementById('curr-country');
+    const currState = document.getElementById('curr-state');
+    const currCity = document.getElementById('curr-city');
+
+    currCountry.addEventListener('change', function() {
+      if (this.value) {
+        currState.disabled = false;
+        currState.value = '';
+        currCity.disabled = true;
+        currCity.value = '';
+      } else {
+        currState.disabled = true;
+        currState.value = '';
+        currCity.disabled = true;
+        currCity.value = '';
+      }
+    });
+
+    currState.addEventListener('change', function() {
+      if (this.value) {
+        currCity.disabled = false;
+        currCity.value = '';
+      } else {
+        currCity.disabled = true;
+        currCity.value = '';
+      }
+    });
+
+    // Permanent Address
+    const permCountry = document.getElementById('perm-country');
+    const permState = document.getElementById('perm-state');
+    const permCity = document.getElementById('perm-city');
+
+    permCountry.addEventListener('change', function() {
+      if (this.value) {
+        permState.disabled = false;
+        permState.value = '';
+        permCity.disabled = true;
+        permCity.value = '';
+      } else {
+        permState.disabled = true;
+        permState.value = '';
+        permCity.disabled = true;
+        permCity.value = '';
+      }
+    });
+
+    permState.addEventListener('change', function() {
+      if (this.value) {
+        permCity.disabled = false;
+        permCity.value = '';
+      } else {
+        permCity.disabled = true;
+        permCity.value = '';
       }
     });
 
@@ -525,12 +607,6 @@
       fieldsToValidate.forEach(field => {
         if (!validateField(field)) valid = false;
       });
-      if (!photoInput.files.length) {
-        showError(photoInput);
-        valid = false;
-      } else {
-        clearError(photoInput);
-      }
       if (!valid) {
         showNotification('Please fix errors in the form before submitting.', 'error');
         return;
