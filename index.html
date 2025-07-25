@@ -250,7 +250,7 @@
             <div class="error-message">Last name is required.</div>
           </div>
           <div class="form-group">
-            <label for="gender">Gender</label>
+            <label for="gender">Gender *</label>
             <select id="gender" name="gender" required>
               <option value="">--Select--</option>
               <option>Male</option>
@@ -265,9 +265,18 @@
             <div class="error-message">Please enter your date of birth.</div>
           </div>
           <div class="form-group">
-            <label for="age">Age</label>
+            <label for="age">Age *</label>
             <input type="number" id="age" name="age" readonly>
             <div class="error-message">Age is required.</div>
+          </div>
+          <div class="form-group">
+            <label for="status">Status *</label>
+            <select id="status" name="status" required>
+              <option value="">--Select Status--</option>
+                <option>Active</option>
+                <option>Inactive</option>
+            </select>
+            <div class="error-message">Please select a status.</div>
           </div>
         </div>
       </fieldset>
@@ -595,6 +604,13 @@ dobInput.addEventListener('change', function() {
         clearError(field);
         return true;
       }
+      if (field.id === 'status') {
+  if (field.value === "") {
+    showError(field);
+    return false;
+  }
+}
+
     }
 
     fieldsToValidate.forEach(field => {
@@ -626,6 +642,8 @@ dobInput.addEventListener('change', function() {
       });
       fieldsToValidate.forEach(field => clearError(field));
       clearNotification();
+      document.getElementById('status').value = 'Active';
+
     });
 
     // --- Notification Bar ---
