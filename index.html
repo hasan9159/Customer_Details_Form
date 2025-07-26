@@ -273,8 +273,8 @@
             <label for="status">Status *</label>
             <select id="status" name="status" required>
               <option value="">--Select Status--</option>
-                <option>Active</option>
-                <option>Inactive</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
             <div class="error-message">Please select a status.</div>
           </div>
@@ -430,237 +430,238 @@
   </div>
 
   <script>
-    // --- Profile Picture Preview ---
-    const photoInput = document.getElementById('photo');
-    const photoPreview = document.getElementById('photoPreview');
-    photoInput.addEventListener('change', function() {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          photoPreview.src = e.target.result;
-        }
-        reader.readAsDataURL(file);
+  // --- Profile Picture Preview ---
+  const photoInput = document.getElementById('photo');
+  const photoPreview = document.getElementById('photoPreview');
+  photoInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        photoPreview.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      photoPreview.src = "https://placehold.co/80x80/E0E0E0/333?text=Photo";
+    }
+  });
+
+  // --- Age Calculation ---
+  const dobInput = document.getElementById('dob');
+  const ageInput = document.getElementById('age');
+  dobInput.addEventListener('change', function () {
+    const dob = new Date(this.value);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    ageInput.value = this.value ? (age >= 0 ? age : '') : '';
+  });
+
+  // --- Address Sync Logic ---
+  const sameAddressCheckbox = document.getElementById('sameAddress');
+  const permanentAddressFieldset = document.getElementById('permanentAddressFieldset');
+  const currentAddressFields = ['curr-address', 'curr-country', 'curr-state', 'curr-city', 'curr-pincode'];
+  const permanentAddressFields = ['perm-address', 'perm-country', 'perm-state', 'perm-city', 'perm-pincode'];
+
+  sameAddressCheckbox.addEventListener('change', function () {
+    const isChecked = this.checked;
+    permanentAddressFieldset.style.display = isChecked ? 'none' : 'block';
+    for (let i = 0; i < permanentAddressFields.length; i++) {
+      const permField = document.getElementById(permanentAddressFields[i]);
+      const currField = document.getElementById(currentAddressFields[i]);
+      if (isChecked) {
+        permField.value = currField.value;
+        permField.disabled = true;
       } else {
-        photoPreview.src = "https://placehold.co/80x80/E0E0E0/333?text=Photo";
+        permField.disabled = false;
       }
-    });
+    }
+  });
 
-    const dobInput = document.getElementById('dob');
-    const ageInput = document.getElementById('age');
+  // --- Enable/disable State and City based on Country and State selection ---
+  const currCountry = document.getElementById('curr-country');
+  const currState = document.getElementById('curr-state');
+  const currCity = document.getElementById('curr-city');
+  currCountry.addEventListener('change', function () {
+    if (this.value) {
+      currState.disabled = false;
+      currState.value = '';
+      currCity.disabled = true;
+      currCity.value = '';
+    } else {
+      currState.disabled = true;
+      currState.value = '';
+      currCity.disabled = true;
+      currCity.value = '';
+    }
+  });
+  currState.addEventListener('change', function () {
+    currCity.disabled = !this.value;
+    currCity.value = '';
+  });
 
-dobInput.addEventListener('change', function() {
-  const dob = new Date(this.value);
-  const today = new Date();
-  let age = today.getFullYear() - dob.getFullYear();
-  const m = today.getMonth() - dob.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-    age--;
+  const permCountry = document.getElementById('perm-country');
+  const permState = document.getElementById('perm-state');
+  const permCity = document.getElementById('perm-city');
+  permCountry.addEventListener('change', function () {
+    if (this.value) {
+      permState.disabled = false;
+      permState.value = '';
+      permCity.disabled = true;
+      permCity.value = '';
+    } else {
+      permState.disabled = true;
+      permState.value = '';
+      permCity.disabled = true;
+      permCity.value = '';
+    }
+  });
+  permState.addEventListener('change', function () {
+    permCity.disabled = !this.value;
+    permCity.value = '';
+  });
+
+  // --- Validation ---
+  const form = document.getElementById('customerForm');
+  const fieldsToValidate = form.querySelectorAll('input, select, textarea');
+
+  function showError(field) {
+    field.classList.add('invalid');
+    const err = field.nextElementSibling;
+    if (err && err.classList.contains('error-message')) {
+      err.style.display = 'block';
+    }
   }
-  ageInput.value = (this.value ? (age >= 0 ? age : '') : '');
-});
-    // --- Address Sync Logic ---
-    const sameAddressCheckbox = document.getElementById('sameAddress');
-    const permanentAddressFieldset = document.getElementById('permanentAddressFieldset');
-    const currentAddressFields = ['curr-address', 'curr-country', 'curr-state', 'curr-city', 'curr-pincode'];
-    const permanentAddressFields = ['perm-address', 'perm-country', 'perm-state', 'perm-city', 'perm-pincode'];
 
-    sameAddressCheckbox.addEventListener('change', function() {
-      const isChecked = this.checked;
-      permanentAddressFieldset.style.display = isChecked ? 'none' : 'block';
-      for (let i = 0; i < permanentAddressFields.length; i++) {
-        const permField = document.getElementById(permanentAddressFields[i]);
-        const currField = document.getElementById(currentAddressFields[i]);
-        if (isChecked) {
-          permField.value = currField.value;
-          permField.disabled = true;
-        } else {
-          permField.disabled = false;
-        }
-      }
-    });
+  function clearError(field) {
+    field.classList.remove('invalid');
+    const err = field.nextElementSibling;
+    if (err && err.classList.contains('error-message')) {
+      err.style.display = 'none';
+    }
+  }
 
-    // --- Enable/disable State and City based on Country and State selection ---
-
-    // Current Address
-    const currCountry = document.getElementById('curr-country');
-    const currState = document.getElementById('curr-state');
-    const currCity = document.getElementById('curr-city');
-
-    currCountry.addEventListener('change', function() {
-      if (this.value) {
-        currState.disabled = false;
-        currState.value = '';
-        currCity.disabled = true;
-        currCity.value = '';
-      } else {
-        currState.disabled = true;
-        currState.value = '';
-        currCity.disabled = true;
-        currCity.value = '';
-      }
-    });
-
-    currState.addEventListener('change', function() {
-      if (this.value) {
-        currCity.disabled = false;
-        currCity.value = '';
-      } else {
-        currCity.disabled = true;
-        currCity.value = '';
-      }
-    });
-
-    // Permanent Address
-    const permCountry = document.getElementById('perm-country');
-    const permState = document.getElementById('perm-state');
-    const permCity = document.getElementById('perm-city');
-
-    permCountry.addEventListener('change', function() {
-      if (this.value) {
-        permState.disabled = false;
-        permState.value = '';
-        permCity.disabled = true;
-        permCity.value = '';
-      } else {
-        permState.disabled = true;
-        permState.value = '';
-        permCity.disabled = true;
-        permCity.value = '';
-      }
-    });
-
-    permState.addEventListener('change', function() {
-      if (this.value) {
-        permCity.disabled = false;
-        permCity.value = '';
-      } else {
-        permCity.disabled = true;
-        permCity.value = '';
-      }
-    });
-
-    // --- Validation ---
-    const form = document.getElementById('customerForm');
-    const fieldsToValidate = form.querySelectorAll('input, select, textarea');
-
-    function showError(field) {
-      field.classList.add('invalid');
-      const err = field.nextElementSibling;
-      if (err && err.classList.contains('error-message')) {
-        err.style.display = 'block';
-      }
+  function validateField(field) {
+    if (field.disabled) {
+      clearError(field);
+      return true;
     }
 
-    function clearError(field) {
-      field.classList.remove('invalid');
-      const err = field.nextElementSibling;
-      if (err && err.classList.contains('error-message')) {
-        err.style.display = 'none';
-      }
-    }
-
-    function validateField(field) {
-      if (field.disabled) {
-        clearError(field);
-        return true;
-      }
-      // Custom validation for Fname and Lname (only letters, min 2 chars)
-      if (field.id === 'Fname' || field.id === 'Lname') {
-        const nameRegex = /^[A-Za-z]{2,}$/;
-        if (!nameRegex.test(field.value.trim())) {
-          showError(field);
-          return false;
-        }
-      }
-      // Custom validation for phone (10 digits)
-      if (field.id === 'phone') {
-        const phoneRegex = /^\d{10}$/;
-        if (!phoneRegex.test(field.value.trim())) {
-          showError(field);
-          return false;
-        }
-      }
-      // Custom validation for email
-      if (field.id === 'email') {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(field.value.trim())) {
-          showError(field);
-          return false;
-        }
-      }
-      // Custom validation for pincode (perm and curr, 6 digits)
-      if (field.id === 'perm-pincode' || field.id === 'curr-pincode') {
-        const pinRegex = /^\d{6}$/;
-        if (!pinRegex.test(field.value.trim())) {
-          showError(field);
-          return false;
-        }
-      }
-      if (!field.checkValidity()) {
+    if (field.id === 'Fname' || field.id === 'Lname') {
+      const nameRegex = /^[A-Za-z]{2,}$/;
+      if (!nameRegex.test(field.value.trim())) {
         showError(field);
         return false;
       } else {
         clearError(field);
         return true;
       }
-      if (field.id === 'status') {
-  if (field.value === "") {
-    showError(field);
-    return false;
-  }
-}
-
     }
 
-    fieldsToValidate.forEach(field => {
-      field.addEventListener('blur', () => validateField(field));
-    });
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      let valid = true;
-      fieldsToValidate.forEach(field => {
-        if (!validateField(field)) valid = false;
-      });
-      if (!valid) {
-        showNotification('Please fix errors in the form before submitting.', 'error');
-        return;
+    if (field.id === 'phone') {
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(field.value.trim())) {
+        showError(field);
+        return false;
+      } else {
+        clearError(field);
+        return true;
       }
-      showNotification('Form submitted successfully!', 'success');
-    });
-
-    // --- Clear Button ---
-    document.getElementById('clearBtn').addEventListener('click', () => {
-      form.reset();
-      photoPreview.src = "https://placehold.co/80x80/E0E0E0/333?text=Photo";
-      ageInput.value = '';
-      permanentAddressFieldset.style.display = 'block';
-      sameAddressCheckbox.checked = false;
-      permanentAddressFields.forEach(id => {
-        document.getElementById(id).disabled = false;
-      });
-      fieldsToValidate.forEach(field => clearError(field));
-      clearNotification();
-      document.getElementById('status').value = 'Active';
-
-    });
-
-    // --- Notification Bar ---
-    const notificationBar = document.getElementById('notification-bar');
-    let notificationTimeout;
-    function showNotification(message, type = 'success') {
-      notificationBar.textContent = message;
-      notificationBar.className = `notification-bar ${type} show`;
-      clearTimeout(notificationTimeout);
-      notificationTimeout = setTimeout(() => {
-        notificationBar.classList.remove('show');
-      }, 4000);
     }
-    function clearNotification() {
+
+    if (field.id === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(field.value.trim())) {
+        showError(field);
+        return false;
+      } else {
+        clearError(field);
+        return true;
+      }
+    }
+
+    if (field.id === 'perm-pincode' || field.id === 'curr-pincode') {
+      const pinRegex = /^\d{6}$/;
+      if (!pinRegex.test(field.value.trim())) {
+        showError(field);
+        return false;
+      } else {
+        clearError(field);
+        return true;
+      }
+    }
+
+    if ((field.tagName === 'SELECT' || field.type === 'select-one') && field.required) {
+      if (field.value === "") {
+        showError(field);
+        return false;
+      } else {
+        clearError(field);
+        return true;
+      }
+    }
+
+    if (!field.checkValidity()) {
+      showError(field);
+      return false;
+    } else {
+      clearError(field);
+      return true;
+    }
+  }
+
+  fieldsToValidate.forEach(field => {
+    field.addEventListener('blur', () => validateField(field));
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    let valid = true;
+    fieldsToValidate.forEach(field => {
+      if (!validateField(field)) valid = false;
+    });
+    if (!valid) {
+      showNotification('Please fix errors in the form before submitting.', 'error');
+      return;
+    }
+    showNotification('Form submitted successfully!', 'success');
+  });
+
+  // --- Clear Button ---
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    form.reset();
+    photoPreview.src = "https://placehold.co/80x80/E0E0E0/333?text=Photo";
+    ageInput.value = '';
+    permanentAddressFieldset.style.display = 'block';
+    sameAddressCheckbox.checked = false;
+    permanentAddressFields.forEach(id => {
+      document.getElementById(id).disabled = false;
+    });
+    fieldsToValidate.forEach(field => clearError(field));
+    clearNotification();
+     document.getElementById('status').value = 'active'; 
+
+  });
+
+  // --- Notification Bar ---
+  const notificationBar = document.getElementById('notification-bar');
+  let notificationTimeout;
+  function showNotification(message, type = 'success') {
+    notificationBar.textContent = message;
+    notificationBar.className = `notification-bar ${type} show`;
+    clearTimeout(notificationTimeout);
+    notificationTimeout = setTimeout(() => {
       notificationBar.classList.remove('show');
-      notificationBar.textContent = '';
-    }
-  </script>
+    }, 4000);
+  }
+  function clearNotification() {
+    notificationBar.classList.remove('show');
+    notificationBar.textContent = '';
+  }
+</script>
+
 </body>
 </html>
