@@ -219,6 +219,35 @@
     .notification-bar.error {
       background: #e74c3c; /* Red */
     }
+    .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002;
+}
+
+.modal-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1.5rem;
+}
+
   </style>
 </head>
 <body>
@@ -428,6 +457,17 @@
       </div>
     </form>
   </div>
+  <!-- Confirmation Modal -->
+<div id="confirmationModal" class="modal-overlay">
+  <div class="modal-box">
+    <p>Are you sure you want to clear the form?</p>
+    <div class="modal-buttons">
+      <button id="confirmClear" class="btn btn-primary">Yes</button>
+      <button id="cancelClear" class="btn btn-secondary">No</button>
+    </div>
+  </div>
+</div>
+
 
   <script>
   // --- Profile Picture Preview ---
@@ -632,17 +672,34 @@
 
   // --- Clear Button ---
   document.getElementById('clearBtn').addEventListener('click', () => {
-    form.reset();
-    photoPreview.src = "https://placehold.co/80x80/E0E0E0/333?text=Photo";
-    ageInput.value = '';
-    permanentAddressFieldset.style.display = 'block';
-    sameAddressCheckbox.checked = false;
-    permanentAddressFields.forEach(id => {
-      document.getElementById(id).disabled = false;
-    });
-    fieldsToValidate.forEach(field => clearError(field));
-    clearNotification();
-     document.getElementById('status').value = 'active'; 
+   const clearBtn = document.getElementById('clearBtn');
+const modal = document.getElementById('confirmationModal');
+const confirmClear = document.getElementById('confirmClear');
+const cancelClear = document.getElementById('cancelClear');
+
+clearBtn.addEventListener('click', () => {
+  modal.style.display = 'flex';
+});
+
+confirmClear.addEventListener('click', () => {
+  form.reset();
+  photoPreview.src = "https://placehold.co/80x80/E0E0E0/333?text=Photo";
+  ageInput.value = '';
+  permanentAddressFieldset.style.display = 'block';
+  sameAddressCheckbox.checked = false;
+  permanentAddressFields.forEach(id => {
+    document.getElementById(id).disabled = false;
+  });
+  fieldsToValidate.forEach(field => clearError(field));
+  clearNotification();
+  document.getElementById('status').value = 'active';
+  modal.style.display = 'none';
+});
+
+cancelClear.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
 
   });
 
