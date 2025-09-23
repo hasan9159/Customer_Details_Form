@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer Details Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bs-primary: #FF7A30;
+      --bs-secondary: #485A82;
+    }
+    body {
+      background-color: #E9E3DF;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    .form-container {
+      background: #E9E3DF;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    .btn-primary {
+      background-color: #FF7A30;
+      border-color: #FF7A30;
+    }
+    .btn-primary:hover {
+      background-color: #485A82;
+      border-color: #485A82;
+    }
+    .btn-secondary {
+      background-color: #485A82;
+      border-color: #485A82;
+    }
+    .btn-secondary:hover {
+      background-color: #FF7A30;
+      border-color: #FF7A30;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #FF7A30;
+      box-shadow: 0 0 0 0.2rem rgba(255, 122, 48, 0.25);
+    }
+    #photoPreview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #485A82;
+      object-fit: cover;
+    }
+    .notification-bar {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      min-width: 320px;
+      max-width: 90vw;
+      padding: 1.5rem 2.5rem;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1001;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .notification-bar.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+    .notification-bar.success {
+      background: #27ae60;
+    }
+    .notification-bar.error {
+      background: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+ <!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+  <div class="container">
+    <!-- Brand Logo + Name -->
+    <a class="navbar-brand d-flex align-items-center fw-bold text-primary" href="http://127.0.0.1:5500/index.html">
+      <img src="https://placehold.co/40x40/FF7A30/fff?text=C" 
+           alt="Logo" 
+           width="40" 
+           height="40" 
+           class="rounded-circle me-2">
+      <span>Customer Portal</span>
+    </a>
+
+    <!-- Mobile Toggle -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Nav Links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Form</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Customers</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Support</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<!-- Navbar End -->
+
+
+  <div class="container-fluid py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="form-container p-4">
+          <div id="notification-bar" class="notification-bar"></div>
+          <h1 class="text-center mb-4">Customer Details</h1>
+          <form id="customerForm" novalidate>
+            <fieldset class="border rounded p-3 mb-2">
+              <legend class="text-primary fw-bold">Personal Details</legend>
+              <div class="row g-3 mb-3">
+                <div class="col-12 d-flex align-items-center gap-3">
+                  <img id="photoPreview" src="https://placehold.co/80x80/E0E0E0/333?text=Photo" alt="Profile Preview">
+                  <div>
+                    <label for="photo" class="form-label">Profile Picture</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" class="form-control">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="Fname" class="form-label">First Name *</label>
+                  <input type="text" id="Fname" name="Fname" class="form-control" required>
+                  <div class="invalid-feedback">First name is required.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="Lname" class="form-label">Last Name *</label>
+                  <input type="text" id="Lname" name="Lname" class="form-control" required>
+                  <div class="invalid-feedback">Last name is required.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="gender" class="form-label">Gender *</label>
+                  <select id="gender" name="gender" class="form-select" required>
+                    <option value="">--Select--</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                  </select>
+                  <div class="invalid-feedback">Please select a gender.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="dob" class="form-label">Date of Birth *</label>
+                  <input type="date" id="dob" name="dob" class="form-control" required>
+                  <div class="invalid-feedback">Please enter your date of birth.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="age" class="form-label">Age *</label>
+                  <input type="number" id="age" name="age" class="form-control" readonly>
+                  <div class="invalid-feedback">Age is required.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="status" class="form-label">Status *</label>
+                  <select id="status" name="status" class="form-select" required>
+                    <option value="active" selected>Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                  <div class="invalid-feedback">Please select a status.</div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="border rounded p-3 mb-2">
+              <legend class="text-primary fw-bold">Contact Details</legend>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="phone" class="form-label">Phone Number *</label>
+                  <input type="number" id="phone" name="phone" pattern="[0-9]{10}" class="form-control" required>
+                  <div class="invalid-feedback">Enter a valid 10-digit phone number.</div>
+                </div>
+                <div class="col-12">
+                  <label for="email" class="form-label">Email *</label>
+                  <input type="email" id="email" name="email" class="form-control" required>
+                  <div class="invalid-feedback">Enter a valid email address.</div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="border rounded p-3 mb-2">
+              <legend class="text-primary fw-bold">Current Address</legend>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="curr-address" class="form-label">Street Address</label>
+                  <input type="text" id="curr-address" name="curr-address" class="form-control" required>
+                  <div class="invalid-feedback">Street address is required.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="curr-country" class="form-label">Country</label>
+                  <select id="curr-country" name="curr-country" class="form-select" required>
+                    <option value="">--Select Country--</option>
+                    <option value="India">India</option>
+                    <option value="USA">USA</option>
+                    <option value="Germany">Germany</option>
+                    <option value="Japan">Japan</option>
+                    <option value="Singapore">Singapore</option>
+                  </select>
+                  <div class="invalid-feedback">Select a country.</div>
+                </div>
+                <div class="col-md-6" id="curr-state-group">
+                  <label for="curr-state" class="form-label">State</label>
+                  <select id="curr-state" name="curr-state" class="form-select" required disabled>
+                    <option value="">--Select State--</option>
+                  </select>
+                  <div class="invalid-feedback">Select a state.</div>
+                </div>
+                <div class="col-md-6" id="curr-state-text-group" style="display:none;">
+                  <label for="curr-state-text" class="form-label">State</label>
+                  <input type="text" id="curr-state-text" name="curr-state-text" class="form-control" placeholder="Enter State">
+                  <div class="invalid-feedback">Enter state.</div>
+                </div>
+                <div class="col-md-6" id="curr-city-group">
+                  <label for="curr-city" class="form-label">City</label>
+                  <select id="curr-city" name="curr-city" class="form-select" required disabled>
+                    <option value="">--Select City--</option>
+                  </select>
+                  <div class="invalid-feedback">Select a city.</div>
+                </div>
+                <div class="col-md-6" id="curr-city-text-group" style="display:none;">
+                  <label for="curr-city-text" class="form-label">City</label>
+                  <input type="text" id="curr-city-text" name="curr-city-text" class="form-control" placeholder="Enter City">
+                  <div class="invalid-feedback">Enter city.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="curr-pincode" class="form-label">Pincode</label>
+                  <input type="text" id="curr-pincode" name="curr-pincode" class="form-control" required pattern="^\d{6}$" maxlength="6" inputmode="numeric" title="Enter 6-digit pincode">
+                  <div class="invalid-feedback">Enter a valid 6-digit pincode.</div>
+                </div>
+              </div>
+            </fieldset>
+
+                <div class=" p-3 mb-2">
+                <div class="form-check d-flex align-items-center" style="padding-left: 0;">
+                  <input type="checkbox" id="sameAddress" class="form-check-input me-2" style="margin-left: 0;">
+                  <label class="form-check-label mb-0" for="sameAddress">
+                    Permanent address is same as current address
+                  </label>
+                </div>
+              </div>
+
+
+            <fieldset id="permanentAddressFieldset" class="border rounded p-3 mb-2">
+              <legend class="text-primary fw-bold">Permanent Address</legend>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="perm-address" class="form-label">Street Address</label>
+                  <input type="text" id="perm-address" name="perm-address" class="form-control" required>
+                  <div class="invalid-feedback">Street address is required.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="perm-country" class="form-label">Country</label>
+                  <select id="perm-country" name="perm-country" class="form-select" required>
+                    <option value="">--Select Country--</option>
+                    <option value="India">India</option>
+                    <option value="USA">USA</option>
+                    <option value="Germany">Germany</option>
+                    <option value="Japan">Japan</option>
+                    <option value="Singapore">Singapore</option>
+                  </select>
+                  <div class="invalid-feedback">Select a country.</div>
+                </div>
+                <div class="col-md-6" id="perm-state-group">
+                  <label for="perm-state" class="form-label">State</label>
+                  <select id="perm-state" name="perm-state" class="form-select" required disabled>
+                    <option value="">--Select State--</option>
+                  </select>
+                  <div class="invalid-feedback">Select a state.</div>
+                </div>
+                <div class="col-md-6" id="perm-state-text-group" style="display:none;">
+                  <label for="perm-state-text" class="form-label">State</label>
+                  <input type="text" id="perm-state-text" name="perm-state-text" class="form-control" placeholder="Enter State">
+                  <div class="invalid-feedback">Enter state.</div>
+                </div>
+                <div class="col-md-6" id="perm-city-group">
+                  <label for="perm-city" class="form-label">City</label>
+                  <select id="perm-city" name="perm-city" class="form-select" required disabled>
+                    <option value="">--Select City--</option>
+                  </select>
+                  <div class="invalid-feedback">Select a city.</div>
+                </div>
+                <div class="col-md-6" id="perm-city-text-group" style="display:none;">
+                  <label for="perm-city-text" class="form-label">City</label>
+                  <input type="text" id="perm-city-text" name="perm-city-text" class="form-control" placeholder="Enter City">
+                  <div class="invalid-feedback">Enter city.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="perm-pincode" class="form-label">Pincode</label>
+                  <input type="text" id="perm-pincode" name="perm-pincode" class="form-control" required pattern="^\d{6}$" maxlength="6" inputmode="numeric" title="Enter 6-digit pincode">
+                  <div class="invalid-feedback">Enter a valid 6-digit pincode.</div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="border rounded p-3 mb-2">
+              <legend class="text-primary fw-bold">Feedback</legend>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="feedback" class="form-label">Feedback</label>
+                  <textarea id="feedback" name="feedback" rows="4" class="form-control" required></textarea>
+                  <div class="invalid-feedback">Please enter your feedback.</div>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+              <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+              <button type="button" class="btn btn-secondary" id="clearBtn">Clear</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal fade" id="confirmationModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <p id="confirmationMessage" class="mb-4">Are you sure?</p>
+          <button id="confirmYes" class="btn btn-primary me-2">Yes</button>
+          <button id="confirmNo" class="btn btn-secondary">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function () {
+  // --- Profile Picture Preview using jQuery ---
+  $('#photo').on('change', function () {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        $('#photoPreview').attr('src', e.target.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      $('#photoPreview').attr('src', 'https://placehold.co/80x80/E0E0E0/333?text=Photo');
+    }
+  });
+
+  // --- Age Calculation using jQuery ---
+  $('#dob').on('change', function () {
+    const dob = new Date($(this).val());
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+
+    $('#age').val($(this).val() ? (age >= 0 ? age : '') : '');
+  });
+
+  // --- Pincode Input Restriction using jQuery ---
+  $('#curr-pincode, #perm-pincode').on('input', function () {
+    $(this).val($(this).val().replace(/[^0-9]/g, '').slice(0, 6));
+  });
+
+  // --- Address Sync Logic using jQuery ---
+  const permanentAddressFields = [
+    'perm-address', 'perm-country', 'perm-state', 'perm-city', 'perm-pincode'
+  ];
+
+  $('#sameAddress').on('change', function () {
+    const isChecked = $(this).is(':checked');
+    $('#permanentAddressFieldset').toggle(!isChecked);
+
+    if (isChecked) {
+      // Copy street address and pincode
+      $('#perm-address').val($('#curr-address').val());
+      $('#perm-pincode').val($('#curr-pincode').val());
+
+      // Copy country and trigger change
+      $('#perm-country').val($('#curr-country').val()).trigger('change');
+
+      setTimeout(() => {
+        // Copy state (dropdown or text)
+        if ($('#curr-state-group').is(':visible')) {
+          $('#perm-state').val($('#curr-state').val()).trigger('change');
+        } else {
+          $('#perm-state-text').val($('#curr-state-text').val());
+        }
+
+        // Copy city (dropdown or text)
+        if ($('#curr-city-group').is(':visible')) {
+          $('#perm-city').val($('#curr-city').val());
+        } else {
+          $('#perm-city-text').val($('#curr-city-text').val());
+        }
+
+        // Disable all permanent address fields
+        $.each([
+          'perm-address', 'perm-country', 'perm-state', 'perm-state-text',
+          'perm-city', 'perm-city-text', 'perm-pincode'
+        ], function (index, id) {
+          $('#' + id).prop('disabled', true);
+        });
+      }, 100);
+
+    } else {
+      // Enable all permanent address fields
+      $.each([
+        'perm-address', 'perm-country', 'perm-state', 'perm-state-text',
+        'perm-city', 'perm-city-text', 'perm-pincode'
+      ], function (index, id) {
+        $('#' + id).prop('disabled', false);
+      });
+    }
+  });
+
+  // --- Enable/disable State and City using jQuery ---
+  $('#curr-country').on('change', function () {
+    if ($(this).val()) {
+      $('#curr-state').prop('disabled', false).val('');
+      $('#curr-city').prop('disabled', true).val('');
+    } else {
+      $('#curr-state').prop('disabled', true).val('');
+      $('#curr-city').prop('disabled', true).val('');
+    }
+  });
+
+  $('#curr-state').on('change', function () {
+    $('#curr-city').prop('disabled', !$(this).val()).val('');
+  });
+
+  $('#perm-country').on('change', function () {
+    if ($(this).val()) {
+      $('#perm-state').prop('disabled', false).val('');
+      $('#perm-city').prop('disabled', true).val('');
+    } else {
+      $('#perm-state').prop('disabled', true).val('');
+      $('#perm-city').prop('disabled', true).val('');
+    }
+  });
+
+  $('#perm-state').on('change', function () {
+    $('#perm-city').prop('disabled', !$(this).val()).val('');
+  });
+
+  // --- Validation using jQuery ---
+  function showError($field) {
+    $field.addClass('is-invalid');
+  }
+
+  function clearError($field) {
+    $field.removeClass('is-invalid');
+  }
+
+  function validateField($field) {
+    if ($field.prop('disabled')) {
+      clearError($field);
+      return true;
+    }
+
+    const fieldId = $field.attr('id');
+    const value = $field.val().trim();
+
+    if (fieldId === 'Fname' || fieldId === 'Lname') {
+      const nameRegex = /^[A-Za-z]{2,}$/;
+      if (!nameRegex.test(value)) {
+        showError($field);
+        return false;
+      }
+    } else if (fieldId === 'phone') {
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(value)) {
+        showError($field);
+        return false;
+      }
+    } else if (fieldId === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        showError($field);
+        return false;
+      }
+    } else if (fieldId === 'perm-pincode' || fieldId === 'curr-pincode') {
+      const pinRegex = /^\d{6}$/;
+      if (!pinRegex.test(value)) {
+        showError($field);
+        return false;
+      }
+    } else if ($field.is('select') && $field.prop('required')) {
+      if (value === "") {
+        showError($field);
+        return false;
+      }
+    } else if (!$field[0].checkValidity()) {
+      showError($field);
+      return false;
+    }
+
+    clearError($field);
+    return true;
+  }
+
+  $('#customerForm input, #customerForm select, #customerForm textarea').on('blur', function () {
+    validateField($(this));
+  });
+
+  $('#customerForm').on('submit', function (e) {
+    e.preventDefault();
+    let valid = true;
+    $(this).find('input, select, textarea').each(function () {
+      if (!validateField($(this))) valid = false;
+    });
+    if (!valid) {
+      showNotification('Please  enter the details in the required fields before submitting.', 'error');
+      return;
+    }
+    showNotification('Form submitted successfully!', 'success');
+  });
+
+  // --- Clear Button using jQuery ---
+  $('#clearBtn').on('click', function () {
+    showConfirmationPopup('Are you sure you want to clear the form?', function () {
+      $('#customerForm')[0].reset();
+      $('#photoPreview').attr('src', 'https://placehold.co/80x80/E0E0E0/333?text=Photo');
+      $('#age').val('');
+      $('#permanentAddressFieldset').show();
+      $('#sameAddress').prop('checked', false);
+
+      $.each(permanentAddressFields, function (index, id) {
+        $('#' + id).prop('disabled', false);
+      });
+
+      $('#customerForm input, #customerForm select, #customerForm textarea').each(function () {
+        clearError($(this));
+      });
+
+      clearNotification();
+      $('#status').val('active');
+    });
+  });
+
+  // --- Notification Bar using jQuery ---
+  const $notificationBar = $('#notification-bar');
+  let notificationTimeout;
+
+  window.showNotification = function(message, type = 'success') {
+    $notificationBar
+      .text(message)
+      .attr('class', `notification-bar ${type} show`);
+
+    clearTimeout(notificationTimeout);
+    notificationTimeout = setTimeout(() => {
+      $notificationBar.removeClass('show');
+    }, 4000);
+  };
+
+  window.clearNotification = function() {
+    $notificationBar.removeClass('show').text('');
+  };
+
+  // --- Confirmation Modal using Bootstrap ---
+  window.showConfirmationPopup = function(message, onConfirm) {
+    const $modal = $('#confirmationModal');
+    const $messageBox = $('#confirmationMessage');
+    const $yesBtn = $('#confirmYes');
+    const $noBtn = $('#confirmNo');
+    const modal = new bootstrap.Modal($modal[0]);
+
+    $messageBox.text(message);
+    modal.show();
+
+    const cleanup = () => {
+      modal.hide();
+      $yesBtn.off('click', handleYes);
+      $noBtn.off('click', handleNo);
+    };
+
+    const handleYes = () => {
+      onConfirm();
+      cleanup();
+    };
+
+    const handleNo = cleanup;
+
+    $yesBtn.on('click', handleYes);
+    $noBtn.on('click', handleNo);
+  };
+
+  // --- Country/State/City Data ---
+  const countryStateMap = {
+    "India": ["Tamil Nadu", "Maharashtra", "Karnataka", "Kerala", "Delhi (NCT)", "West Bengal"],
+    "USA": ["California", "Texas", "New York", "Florida", "Illinois"],
+    "Germany": ["Bavaria", "Berlin", "Hesse", "Hamburg", "Saxony"],
+    "Japan": ["Tokyo", "Osaka", "Kyoto", "Hokkaido", "Fukuoka"],
+    "Singapore": ["Central Region", "North Region", "North-East Region", "East Region", "West Region"]
+  };
+
+  const stateCityMap = {
+    // India
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli"],
+    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik"],
+    "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi-Dharwad"],
+    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur"],
+    "Delhi (NCT)": ["New Delhi", "Dwarka", "Rohini", "Saket"],
+    "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Siliguri"],
+
+    // USA
+    "California": ["Los Angeles", "San Francisco", "San Diego", "Sacramento"],
+    "Texas": ["Houston", "Dallas", "Austin", "San Antonio"],
+    "New York": ["New York City", "Buffalo", "Rochester", "Albany"],
+    "Florida": ["Miami", "Orlando", "Tampa", "Tallahassee"],
+    "Illinois": ["Chicago", "Springfield", "Naperville", "Peoria"],
+
+    // Germany
+    "Bavaria": ["Munich", "Nuremberg", "Augsburg", "Regensburg"],
+    "Berlin": ["Berlin-Mitte", "Charlottenburg", "Kreuzberg", "Spandau"],
+    "Hesse": ["Frankfurt", "Wiesbaden", "Darmstadt", "Kassel"],
+    "Hamburg": ["Hamburg-Mitte", "Altona", "Eimsbüttel", "Harburg"],
+    "Saxony": ["Dresden", "Leipzig", "Chemnitz", "Zwickau"],
+
+    // Japan
+    "Tokyo": ["Shinjuku", "Shibuya", "Setagaya", "Chiyoda"],
+    "Osaka": ["Kita", "Naniwa", "Tennoji", "Chuo"],
+    "Kyoto": ["Fushimi", "Sakyo", "Ukyo", "Higashiyama"],
+    "Hokkaido": ["Sapporo", "Hakodate", "Asahikawa", "Obihiro"],
+    "Fukuoka": ["Fukuoka City", "Kitakyushu", "Kurume", "Iizuka"],
+
+    // Singapore
+    "Central Region": ["Bukit Merah", "Queenstown", "Toa Payoh", "Orchard"],
+    "North Region": ["Woodlands", "Yishun", "Sembawang", "Admiralty"],
+    "North-East Region": ["Hougang", "Sengkang", "Punggol", "Serangoon"],
+    "East Region": ["Tampines", "Pasir Ris", "Bedok", "Changi"],
+    "West Region": ["Jurong East", "Clementi", "Bukit Batok", "Choa Chu Kang"]
+  };
+
+  // --- Address Population using jQuery ---
+  function populateStates(country, $stateSelect) {
+    $stateSelect.html('<option value="">--Select State--</option>');
+    $.each(countryStateMap[country] || [], function (index, state) {
+      $stateSelect.append(`<option value="${state}">${state}</option>`);
+    });
+  }
+
+  function populateCities(state, $citySelect) {
+    $citySelect.html('<option value="">--Select City--</option>');
+    $.each(stateCityMap[state] || [], function (index, city) {
+      $citySelect.append(`<option value="${city}">${city}</option>`);
+    });
+  }
+
+  function setupAddress(prefix) {
+    const $country = $(`#${prefix}-country`);
+    const $state = $(`#${prefix}-state`);
+    const $city = $(`#${prefix}-city`);
+    const $stateGroup = $(`#${prefix}-state-group`);
+    const $cityGroup = $(`#${prefix}-city-group`);
+    const $stateTextGroup = $(`#${prefix}-state-text-group`);
+    const $cityTextGroup = $(`#${prefix}-city-text-group`);
+    const $stateText = $(`#${prefix}-state-text`);
+    const $cityText = $(`#${prefix}-city-text`);
+
+    $country.on("change", function () {
+      const country = $(this).val();
+      const hasStates = countryStateMap.hasOwnProperty(country);
+
+      // Toggle UI
+      $stateGroup.toggle(hasStates);
+      $cityGroup.toggle(hasStates);
+      $stateTextGroup.toggle(!hasStates);
+      $cityTextGroup.toggle(!hasStates);
+
+      // Reset all
+      $state.prop('disabled', !hasStates).html('<option value="">--Select State--</option>');
+      $city.prop('disabled', !hasStates).html('<option value="">--Select City--</option>');
+      $stateText.val("");
+      $cityText.val("");
+
+      if (hasStates) {
+        populateStates(country, $state);
+      }
+    });
+
+    $state.on("change", function () {
+      const selectedState = $(this).val();
+      $city.prop('disabled', false);
+      populateCities(selectedState, $city);
+    });
+  }
+
+  setupAddress("curr");
+  setupAddress("perm");
+});
+</script>
+
+</body>
+</html>  

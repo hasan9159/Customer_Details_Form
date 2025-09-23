@@ -1,0 +1,616 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>City Master Form</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(to right, #74ebd5, #acb6e5);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-top: 20px;
+      padding-bottom: 50px;
+    }
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      border: none;
+    }
+    .card-header {
+      background: linear-gradient(to right, #3f51b5, #303f9f);
+      color: white;
+      border-radius: 12px 12px 0 0 !important;
+    }
+    .required-field::after {
+      content: " *";
+      color: red;
+    }
+    .btn-primary {
+      background-color: #3f51b5;
+      border-color: #3f51b5;
+    }
+    .btn-primary:hover {
+      background-color: #303f9f;
+      border-color: #303f9f;
+    }
+    .btn-danger {
+      background-color: #f44336;
+      border-color: #f44336;
+    }
+    .btn-danger:hover {
+      background-color: #d32f2f;
+      border-color: #d32f2f;
+    }
+    .modal-content {
+      border-radius: 12px;
+    }
+    .modal-header {
+      background: linear-gradient(to right, #3f51b5, #303f9f);
+      color: white;
+      border-radius: 12px 12px 0 0;
+    }
+    .persistent-toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      min-width: 250px;
+      animation: slideInRight 0.4s ease-in-out;
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .action-buttons .btn {
+      margin: 5px;
+    }
+    .input-error {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+    }
+    .toast-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Persistent Toast Notification Container -->
+  <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card">
+          <div class="card-header text-center py-3">
+            <h2 class="mb-0"><i class="fas fa-city me-2"></i>City Master Form</h2>
+            <p class="mb-0">City Details</p>
+          </div>
+          <div class="card-body">
+            <form id="cityForm">
+              <div class="row mb-4">
+                <div class="col-md-12">
+                  <label for="city1" class="form-label required-field">City Name</label>
+                  <input type="text" class="form-control" id="city1" name="city1" required>
+                  <div class="form-text">Only letters and spaces allowed</div>
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <div class="col-md-6 mb-3 mb-md-0">
+                  <label for="country1" class="form-label required-field">Country</label>
+                  <select class="form-select" id="country1" name="country1" required>
+                    <option value="">--Select--</option>
+                    <option>India</option>
+                    <option>USA</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="state1" class="form-label required-field">State</label>
+                  <select class="form-select" id="state1" name="state1" required disabled>
+                    <option value="">--Select--</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <div class="col-md-6 mb-3 mb-md-0">
+                  <label for="lan" class="form-label">Latitude</label>
+                  <input type="number" class="form-control" id="lan" name="lan" step="any" placeholder="e.g., 12.96">
+                  <div class="form-text">Must be between -90 and 90</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="lon" class="form-label">Longitude</label>
+                  <input type="number" class="form-control" id="lon" name="lon" step="any" placeholder="e.g., 77.58">
+                  <div class="form-text">Must be between -180 and 180</div>
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <label for="status" class="form-label required-field">Status</label>
+                  <select class="form-select" id="status" name="status" required>
+                    <option value="Active" selected>Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <div class="col-md-12 text-center action-buttons">
+                  <button type="button" class="btn btn-info" id="addAreaBtn">
+                    <i class="fas fa-plus-circle me-1"></i>Add Area
+                  </button>
+                  <button type="button" class="btn btn-warning" id="addStateBtn">
+                    <i class="fas fa-plus-circle me-1"></i>Add State
+                  </button>
+                  <button type="button" class="btn btn-success" id="addCountryBtn">
+                    <i class="fas fa-plus-circle me-1"></i>Add Country
+                  </button>
+                </div>
+              </div>
+
+              <div class="row mt-4">
+                <div class="col-md-12 text-center">
+                  <button type="button" class="btn btn-primary btn-lg" id="submitBtn">
+                    <i class="fas fa-paper-plane me-1"></i>Submit
+                  </button>
+                  <button type="button" class="btn btn-danger btn-lg" id="clearBtn">
+                    <i class="fas fa-eraser me-1"></i>Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Area Modal -->
+  <div class="modal fade" id="areaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-map-marker-alt me-2"></i>Add New Area</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label for="newAreaInput" class="form-label required-field">Area Name</label>
+              <input type="text" class="form-control" id="newAreaInput" placeholder="Enter area name">
+              <div class="form-text">Only letters and spaces allowed</div>
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <label for="areaModalCountry" class="form-label required-field">Country</label>
+              <select class="form-select" id="areaModalCountry">
+                <option value="">--Select Country--</option>
+                <option>India</option>
+                <option>USA</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="areaModalState" class="form-label required-field">State</label>
+              <select class="form-select" id="areaModalState" disabled>
+                <option value="">--Select State--</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <label for="areaModalCity" class="form-label required-field">City</label>
+              <select class="form-select" id="areaModalCity" disabled>
+                <option value="">--Select City--</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="areaModalPin" class="form-label required-field">Pin Code</label>
+              <input type="text" class="form-control" id="areaModalPin" placeholder="Enter 6-digit pin" maxlength="6">
+              <div class="form-text">Must be exactly 6 digits</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="clearAreaBtn">Clear</button>
+          <button type="button" class="btn btn-primary" id="saveAreaBtn">Save Area</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- State Modal -->
+  <div class="modal fade" id="stateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-map me-2"></i>Add New State</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label for="newStateInput" class="form-label required-field">State Name</label>
+              <input type="text" class="form-control" id="newStateInput" placeholder="Enter state name">
+              <div class="form-text">Only letters and spaces allowed</div>
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label for="stateModalCountry" class="form-label required-field">Country</label>
+              <select class="form-select" id="stateModalCountry">
+                <option value="">--Select Country--</option>
+                <option>India</option>
+                <option>USA</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="clearStateBtn">Clear</button>
+          <button type="button" class="btn btn-primary" id="saveStateBtn">Save State</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Country Modal -->
+  <div class="modal fade" id="countryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-globe me-2"></i>Add New Country</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label for="newCountryInput" class="form-label required-field">Country Name</label>
+              <input type="text" class="form-control" id="newCountryInput" placeholder="Enter country name">
+              <div class="form-text">Only letters and spaces allowed</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="clearCountryBtn">Clear</button>
+          <button type="button" class="btn btn-primary" id="saveCountryBtn">Save Country</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-question-circle me-2"></i>Confirmation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmationMessage">Are you sure you want to proceed?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirmYes">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap & jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Data for countries, states and cities
+    const locationData = {
+      "India": {
+        "Tamilnadu": ["Chennai", "Coimbatore", "Madurai"],
+        "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode"],
+        "Karnataka": ["Bangalore", "Mysore", "Hubli"],
+        "Andhra Pradesh": ["Hyderabad", "Vishakhapatnam", "Vijayawada"]
+      },
+      "USA": {
+        "California": ["Los Angeles", "San Francisco", "San Diego"],
+        "Texas": ["Houston", "Dallas", "Austin"],
+        "New York": ["New York City", "Buffalo", "Rochester"],
+        "Florida": ["Miami", "Orlando", "Tampa"]
+      }
+    };
+
+    // jQuery DOM Ready
+    $(function () {
+      // Function to show persistent toast
+      function showPersistentToast(message, isError = false) {
+        const toastId = 'toast-' + new Date().getTime();
+        const bgClass = isError ? 'bg-danger' : 'bg-success';
+        const iconClass = isError ? 'fa-exclamation-circle' : 'fa-check-circle';
+        
+        const toastHTML = `
+          <div id="${toastId}" class="toast persistent-toast ${bgClass} text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+            <div class="toast-header ${bgClass} text-white">
+              <strong class="me-auto"><i class="fas ${iconClass} me-2"></i>Notification</strong>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+              ${message}
+            </div>
+          </div>
+        `;
+        
+        $('#toastContainer').append(toastHTML);
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+
+      // Populate state dropdown based on selected country
+      $('#country1').on('change', function () {
+        const country = $(this).val();
+        const $state = $('#state1');
+        $state.empty().append('<option value="">--Select--</option>').prop('disabled', !country);
+
+        if (country && locationData[country]) {
+          $.each(locationData[country], function (state) {
+            $state.append(`<option value="${state}">${state}</option>`);
+          });
+        }
+      });
+
+      // Validate input fields - only allow letters and spaces
+      function validateTextInput(input) {
+        const originalValue = input.val();
+        const filteredValue = originalValue.replace(/[^A-Za-z\s]/g, '');
+        
+        if (originalValue !== filteredValue) {
+          input.addClass('input-error');
+          setTimeout(() => input.removeClass('input-error'), 1000);
+        }
+        
+        input.val(filteredValue);
+        return /^[A-Za-z\s]+$/.test(filteredValue);
+      }
+
+      // Validate pin code - only allow numbers
+      function validatePinInput(input) {
+        const originalValue = input.val();
+        const filteredValue = originalValue.replace(/\D/g, '');
+        
+        if (originalValue !== filteredValue) {
+          input.addClass('input-error');
+          setTimeout(() => input.removeClass('input-error'), 1000);
+        }
+        
+        input.val(filteredValue);
+        return /^\d{6}$/.test(filteredValue);
+      }
+
+      // Set up validation for all text inputs
+      $('#city1, #newAreaInput, #newStateInput, #newCountryInput').on('input', function() {
+        validateTextInput($(this));
+      });
+
+      // Set up validation for pin code
+      $('#areaModalPin').on('input', function() {
+        validatePinInput($(this));
+      });
+
+      $('#lan, #lon').on('input', function () {
+        const id = $(this).attr('id');
+        const val = parseFloat($(this).val());
+        const isValid = id === 'lan' ? (val >= -90 && val <= 90) : (val >= -180 && val <= 180);
+        if (!isValid) {
+          $(this).addClass('input-error');
+          setTimeout(() => $(this).removeClass('input-error'), 1000);
+          $(this).val('');
+        }
+      });
+
+      // Open modals
+      $('#addAreaBtn').on('click', function () {
+        $('#areaModal').modal('show');
+        resetAreaModal();
+      });
+
+      $('#addStateBtn').on('click', function () {
+        $('#stateModal').modal('show');
+        resetStateModal();
+      });
+
+      $('#addCountryBtn').on('click', function () {
+        $('#countryModal').modal('show');
+        resetCountryModal();
+      });
+
+      // Modal dropdowns
+      $('#areaModalCountry').on('change', function () {
+        const country = $(this).val();
+        const $state = $('#areaModalState');
+        const $city = $('#areaModalCity');
+        $state.empty().append('<option value="">--Select--</option>').prop('disabled', !country);
+        $city.empty().append('<option value="">--Select--</option>').prop('disabled', true);
+        $('#areaModalPin').val('');
+
+        if (locationData[country]) {
+          $.each(locationData[country], function (state) {
+            $state.append(`<option value="${state}">${state}</option>`);
+          });
+        }
+      });
+
+      $('#areaModalState').on('change', function () {
+        const country = $('#areaModalCountry').val();
+        const state = $(this).val();
+        const $city = $('#areaModalCity');
+        $city.empty().append('<option value="">--Select--</option>').prop('disabled', !state);
+        $('#areaModalPin').val('');
+
+        if (locationData[country] && locationData[country][state]) {
+          $.each(locationData[country][state], function (index, city) {
+            $city.append(`<option value="${city}">${city}</option>`);
+          });
+        }
+      });
+
+      // Save Country
+      $('#saveCountryBtn').on('click', function () {
+        const country = $('#newCountryInput').val().trim();
+        if (!validateTextInput($('#newCountryInput')) || !country) {
+          showPersistentToast("Please enter a valid country name", true);
+          return;
+        }
+        if (!locationData[country]) {
+          locationData[country] = {};
+          $('#country1').append(`<option value="${country}">${country}</option>`);
+          $('#areaModalCountry').append(`<option value="${country}">${country}</option>`);
+          $('#stateModalCountry').append(`<option value="${country}">${country}</option>`);
+          showPersistentToast("Country saved successfully!");
+          resetCountryModal();
+          $('#countryModal').modal('hide');
+        } else {
+          showPersistentToast("Country already exists!", true);
+        }
+      });
+
+      // Save State
+      $('#saveStateBtn').on('click', function () {
+        const state = $('#newStateInput').val().trim();
+        const country = $('#stateModalCountry').val();
+
+        if (!validateTextInput($('#newStateInput')) || !state || !country) {
+          showPersistentToast("Please fill all required fields correctly", true);
+          return;
+        }
+
+        if (!locationData[country]) locationData[country] = {};
+        if (!locationData[country][state]) {
+          locationData[country][state] = [];
+          if (country === $('#country1').val()) {
+            $('#state1').append(`<option value="${state}">${state}</option>`);
+          }
+          showPersistentToast("State saved successfully!");
+          resetStateModal();
+          $('#stateModal').modal('hide');
+        } else {
+          showPersistentToast("State already exists!", true);
+        }
+      });
+
+      // Save Area
+      $('#saveAreaBtn').on('click', function () {
+        const area = $('#newAreaInput').val().trim();
+        const pin = $('#areaModalPin').val().trim();
+        const country = $('#areaModalCountry').val();
+        const state = $('#areaModalState').val();
+        const city = $('#areaModalCity').val();
+
+        if (!validateTextInput($('#newAreaInput')) || !area || 
+            !validatePinInput($('#areaModalPin')) || !pin ||
+            !country || !state || !city) {
+          showPersistentToast("Please fill all required fields correctly", true);
+          return;
+        }
+
+        showPersistentToast("Area saved successfully!");
+        resetAreaModal();
+        $('#areaModal').modal('hide');
+      });
+
+      // Clear buttons
+      $('#clearAreaBtn').on('click', function() {
+        resetAreaModal();
+      });
+      
+      $('#clearStateBtn').on('click', function() {
+        resetStateModal();
+      });
+      
+      $('#clearCountryBtn').on('click', function() {
+        resetCountryModal();
+      });
+
+      $('#clearBtn').on('click', function () {
+        showConfirmation("Are you sure you want to clear all form data?", function() {
+          $('#cityForm')[0].reset();
+          $('#state1').prop('disabled', true);
+          showPersistentToast("Form cleared successfully!");
+        });
+      });
+
+      $('#submitBtn').on('click', function () {
+        const valid =
+          validateTextInput($('#city1')) &&
+          $('#city1').val().trim() &&
+          $('#country1').val() &&
+          $('#state1').val() &&
+          validateCoordinate($('#lan').val(), -90, 90) &&
+          validateCoordinate($('#lon').val(), -180, 180) &&
+          $('#status').val();
+
+        if (!valid) {
+          showPersistentToast("Please fill all the required fields correctly.", true);
+          return;
+        }
+
+        showConfirmation("Are you sure you want to submit the form?", function() {
+          showPersistentToast("City details submitted successfully!");
+          $('#cityForm')[0].reset();
+          $('#state1').prop('disabled', true);
+        });
+      });
+
+      // Utility functions
+      function resetAreaModal() {
+        $('#newAreaInput, #areaModalPin').val('');
+        $('#areaModalCountry, #areaModalState, #areaModalCity').val('');
+        $('#areaModalState, #areaModalCity').prop('disabled', true);
+      }
+
+      function resetStateModal() {
+        $('#newStateInput, #stateModalCountry').val('');
+      }
+
+      function resetCountryModal() {
+        $('#newCountryInput').val('');
+      }
+
+      function validateCoordinate(val, min, max) {
+        if (!val) return true; // Empty is allowed
+        const num = parseFloat(val);
+        return !isNaN(num) && num >= min && num <= max;
+      }
+
+      function showConfirmation(message, yesCallback) {
+        $('#confirmationMessage').text(message);
+        $('#confirmationModal').modal('show');
+        
+        // Remove previous handlers
+        $('#confirmYes').off('click');
+        
+        // Add new handler
+        $('#confirmYes').on('click', function() {
+          $('#confirmationModal').modal('hide');
+          yesCallback();
+        });
+      }
+    });
+  </script>
+</body>
+</html>
